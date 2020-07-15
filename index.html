@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Asynchronous &quot;setState&quot; in Reactjs by niha512</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/niha512">View On GitHub</a></li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Asynchronous &quot;setState&quot; in Reactjs</h1>
+          <p>What!!! Why?? How...</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/niha512">niha512</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h2>
+<a id="setstate-in-reactjs" class="anchor" href="#setstate-in-reactjs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>setState() in Reactjs</h2>
+<p>Reactjs has Components that uses States for user interaction. For example when a user clicks a button, through state we tell React what to do , display / hide / focus / change or whatever...</p>
+<p>But how do we change this state???</p>
+<p>Well, good for us React provides simple method <strong>"setState()"</strong> that changes the state as told.</p>
+<h3>
+<a id="what-is-meant-by-asynchronous-setstate-" class="anchor" href="#what-is-meant-by-asynchronous-setstate-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><strong>What is meant by Asynchronous setState() ???</strong>
+</h3>
+<pre><code> constructor(props){
+    super(props);
+    this.state = {
+        counter : 0
+    }
+}
+
+handleClick = () =&gt; {
+    console.log("Before click execution: "+this.state.counter);
+    this.setState({
+        counter : state.counter + 1
+    })
+    console.log("After click execution: "+this.state.counter);
+}
+
+render(){
+    return(
+        &lt;div&gt;
+            &lt;Button onClick = {this.handleClick}&gt;
+                Click Me
+            &lt;/Button&gt;
+        &lt;/div&gt;
+        
+    )
+}
+</code></pre>
+<p>Log statement will print same counter before and after click execution.</p>
+<p>This is <strong>"Asynchronous"</strong> nature of setState.</p>
+<p>Normal working would be, handleClick should execute step by step and setState() should change the state of counter before log statement executes, this will be Synchronous nature but React doesn't work that way, it queues all the state changes and executes them in batches.</p>
+<h3>
+<a id="but-why-" class="anchor" href="#but-why-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><strong>But Why ????</strong>
+</h3>
+<p>React executes state changes in batches, because usually every user interaction will create some change in state, everytime state changes react renders parent, child components related to that component, this leads to a lot of renders by which users can get exhausted and leave the site(We don't want that).</p>
+<p>So React executes them priority wise so if user makes some changes which will be reflected on UI, then react sets those states and renders the page.</p>
+<h3>
+<a id="then-how-to-resolve-this-inconsistency-" class="anchor" href="#then-how-to-resolve-this-inconsistency-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><strong>Then How to resolve this inconsistency ???</strong>
+</h3>
+<p>For this react provides "callbacks" in setState.</p>
+<pre><code>  this.setState({
+        counter : this.state.counter + 1
+    },()=&gt;
+    console.log("After click execution: "+this.state.counter))
+</code></pre>
+<p>With this after click log prints only after setState execution so there won't be any inconsistency in states.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
