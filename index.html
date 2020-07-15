@@ -53,7 +53,7 @@
 handleClick = () =&gt; {
     console.log("Before click execution: "+this.state.counter);
     this.setState({
-        counter : state.counter + 1
+        counter : this.state.counter + 1
     })
     console.log("After click execution: "+this.state.counter);
 }
@@ -86,7 +86,7 @@ render(){
     },()=&gt;
     console.log("After click execution: "+this.state.counter))
 </code></pre>
-<p>With this after click log prints only after setState execution so there won't be any inconsistency in states.</p>
+<p>With this, after click log prints only after setState execution so there won't be any inconsistency in states.</p>
       </section>
 
     </div>
