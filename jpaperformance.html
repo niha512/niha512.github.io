@@ -53,9 +53,9 @@
 </p>
 <pre>
     <code>
-public interface ObjectiveRepository extends PagingAndSortingRepository<Objective, Integer> {
+public interface ObjectiveRepository extends PagingAndSortingRepository&ltObjective, Integer&gt {
 
-Page<Objective> findAll(Pageable pageable);
+Page&ltObjective&gt findAll(Pageable pageable);
 
 }      
     </code>
@@ -74,10 +74,10 @@ Page<Objective> findAll(Pageable pageable);
     <p></p>
     <pre>
         <code>
-public interface ObjectiveRepository extends PagingAndSortingRepository<Objective, Integer> {
+public interface ObjectiveRepository extends PagingAndSortingRepository &ltObjective, Integer&gt {
 
-@EntityGraph( attributePaths = { "WorkerIdFk", "ObjectiveAnalysis"})
-Page<Objective> findAll(Pageable pageable);
+@EntityGraph(attributePaths = {"WorkerIdFk", "ObjectiveAnalysis"})
+Page&ltObjective&gt findAll(Pageable pageable);
 
 }
 </code>
