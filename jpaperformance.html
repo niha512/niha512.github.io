@@ -34,55 +34,35 @@
     Page size is 10.
 </p>
 <p>
-    
+    There are three tables worker, objectives, objectiveAnalysis. For one row in table i have to get data from these three tables.
+    So i created three entity models for three tables with onetoone, onetomany relationships.
 </p>
-            <h3>
-<a id="what-is-meant-by-asynchronous-setstate-" class="anchor" href="#what-is-meant-by-asynchronous-setstate-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><strong>What is meant by Asynchronous setState() ???</strong>
-</h3>
-<pre><code> constructor(props){
-    super(props);
-    this.state = {
-        counter : 0
-    }
-}
-
-handleClick = () =&gt; {
-    console.log("Before click execution: "+this.state.counter);
-    this.setState({
-        counter : this.state.counter + 1
-    })
-    console.log("After click execution: "+this.state.counter);
-}
-
-render(){
-    return(
-        &lt;div&gt;
-            &lt;Button onClick = {this.handleClick}&gt;
-                Click Me
-            &lt;/Button&gt;
-        &lt;/div&gt;
-        
-    )
-}
-</code></pre>
-<p>Log statement will print same counter before and after click execution.</p>
-<p>This is <strong>"Asynchronous"</strong> nature of setState.</p>
-<p>Normal working would be, handleClick should execute step by step and setState() should change the state of counter before log statement executes, this will be Synchronous nature but React doesn't work that way, it queues all the state changes and executes them in batches.</p>
 <h3>
-<a id="but-why-" class="anchor" href="#but-why-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><strong>But Why ????</strong>
+<strong>My First approach:</strong>
 </h3>
-<p>React executes state changes in batches, because usually every user interaction will create some change in state, everytime state changes react renders parent, child components related to that component, this leads to a lot of renders by which users can get exhausted and leave the site(We don't want that).</p>
-<p>So React executes them priority wise so if user makes some changes which will be reflected on UI, then react sets those states and renders the page.</p>
+<p>First i created jpa repository for Objectives and used Paging fuctionality of PagingAndSorting repository. With this i get rows corresponding to the page.
+    But whenever user clicks on page in UI, my backend takes 3-4secs to return the page information to UI.
+    3-4secs for each page is lot of time.
+</p>
+<p>
+    Then using hibernate logs and sql logs i found that, for each row in page jpa is doing one select.
+    So for 10 rows in a page 10 select queries are executed, and table merges happen 10 times. Because of this turnaround time is high.
+</p>
+<p><img src="/images/jpa/beforeEntityGraph" alt="Before Entity Graph"></p>
+<p></p>
+<p></p>
 <h3>
-<a id="then-how-to-resolve-this-inconsistency-" class="anchor" href="#then-how-to-resolve-this-inconsistency-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><strong>Then How to resolve this inconsistency ???</strong>
-</h3>
-<p>For this react provides "callbacks" in setState.</p>
-<pre><code>  this.setState({
-        counter : this.state.counter + 1
-    },()=&gt;
-    console.log("After click execution: "+this.state.counter))
-</code></pre>
-<p>With this, after click log prints only after setState execution so there won't be any inconsistency in states.</p>
+    <strong>Jpa Optimization</strong>
+    </h3>
+    <p>To reduce the turnaround time i have to reduce the number of select statements to database.</p>
+    <p>For this Jpa has EntityGraph concept. Here we provide the entities to be fetched at runtime, unlike FetchType(Lazy, Eager) which are static and have to be given in model itself.
+        In EntityGraph we give associated entities to be fetched when a query is executed. 
+    </p>
+    <p>When the EntityGraph attributes are given, then jpa gets all the related associations of all rows in one single select statement.</p>
+    <p>By using this my application performance enhanced alot. Now the turnaround time is less than 1sec.</p>
+    <p></p>
+    <p><img src="/images/jpa/afterEntityGraph" alt="After Entity Graph"></p>
+
       </section>
 
     </div>
