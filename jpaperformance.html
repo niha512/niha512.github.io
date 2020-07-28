@@ -27,7 +27,7 @@
           <p>Reduce search time</p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/niha512">niha512</a></span>
-          <span class="credits left">Created On: 26-July-2020</span>
+          <span class="credits right">Created On: <a href="#">26-July-2020</a></span>
 
           </div>
 
@@ -53,12 +53,11 @@
 </p>
 <pre>
     <code>
-        public interface ObjectiveRepository extends PagingAndSortingRepository<Objective, Integer> {
+public interface ObjectiveRepository extends PagingAndSortingRepository<Objective, Integer> {
 
-            Page<Objective> findAll(Pageable pageable);
+Page<Objective> findAll(Pageable pageable);
 
-        }
-        
+}      
     </code>
 </pre>
 <p></p>
@@ -75,13 +74,13 @@
     <p></p>
     <pre>
         <code>
-            public interface ObjectiveRepository extends PagingAndSortingRepository<Objective, Integer> {
+public interface ObjectiveRepository extends PagingAndSortingRepository<Objective, Integer> {
 
-                @EntityGraph( attributePaths = { "WorkerIdFk", "ObjectiveAnalysis"})
-                Page<Objective> findAll(Pageable pageable);
+@EntityGraph( attributePaths = { "WorkerIdFk", "ObjectiveAnalysis"})
+Page<Objective> findAll(Pageable pageable);
 
-            }
-        </code>
+}
+</code>
     </pre>
       </section>
 
