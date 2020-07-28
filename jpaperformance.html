@@ -24,11 +24,14 @@
       <section>
         <div id="title">
           <h1>JPA Performance Enhancement</h1>
-          <p>Reduce search time in Database</p>
+          <p>Reduce search time</p>
           <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/niha512">niha512</a></span>
+          <span class="credits left">Created On: 26-July-2020</span>
+
           </div>
 
-<h3>Background: </h3>            
+<h3><strong>Background: </strong></h3>            
 <p>I was developing a UI page which has a table that displays objectives set by Employee. There are large number of rows in table(every employee sets atleast 3 objectives), so i used pagination to display contents on table. 
     So the usecase was whenever user clicks on page, react will call my backend api and gets objectives to be displayed on that page.
     Page size is 10.
@@ -45,24 +48,41 @@
     3-4secs for each page is lot of time.
 </p>
 <p>
-    Then using hibernate logs and sql logs i found that, for each row in page jpa is doing one select.
-    So for 10 rows in a page 10 select queries are executed, and table merges happen 10 times. Because of this turnaround time is high.
+    Then using hibernate logs and sql logs i found that, for each row in page, jpa is doing one select.
+    So for 10 rows in a page, 10 select queries are executed, and table merges happen 10 times. Because of this turnaround time is high.
 </p>
-<p><img src="/images/jpa/beforeEntityGraph" alt="Before Entity Graph"></p>
+<pre>
+    <code>
+        public interface ObjectiveRepository extends PagingAndSortingRepository<Objective, Integer> {
+
+            Page<Objective> findAll(Pageable pageable);
+
+        }
+        
+    </code>
+</pre>
 <p></p>
 <p></p>
 <h3>
     <strong>Jpa Optimization</strong>
     </h3>
-    <p>To reduce the turnaround time i have to reduce the number of select statements to database.</p>
-    <p>For this Jpa has EntityGraph concept. Here we provide the entities to be fetched at runtime, unlike FetchType(Lazy, Eager) which are static and have to be given in model itself.
+    <p>To reduce the turnaround time, i have to reduce the number of select statements to database.</p>
+    <p>For this, Jpa has EntityGraph concept. Here we provide the entities to be fetched at runtime, unlike FetchType(Lazy, Eager) which are static and have to be given in model itself.
         In EntityGraph we give associated entities to be fetched when a query is executed. 
     </p>
     <p>When the EntityGraph attributes are given, then jpa gets all the related associations of all rows in one single select statement.</p>
     <p>By using this my application performance enhanced alot. Now the turnaround time is less than 1sec.</p>
     <p></p>
-    <p><img src="/images/jpa/afterEntityGraph" alt="After Entity Graph"></p>
+    <pre>
+        <code>
+            public interface ObjectiveRepository extends PagingAndSortingRepository<Objective, Integer> {
 
+                @EntityGraph( attributePaths = { "WorkerIdFk", "ObjectiveAnalysis"})
+                Page<Objective> findAll(Pageable pageable);
+
+            }
+        </code>
+    </pre>
       </section>
 
     </div>
