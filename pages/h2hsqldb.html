@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>H2 vs HSQLDB configuration by niha512</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>H2 vs HSQLDB configuration in SpringBoot</h1>
+          <p>What is the difference???</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/niha512">niha512</a></span>
+          <span class="credits right">Created On: <a href="#">08-August-2020</a></span>
+       </div>
+
+    <h3><strong>Background:</strong></h3>
+    <p>In all the projects i have worked till now, i used H2 in-memory database for development. But in my present project i was asked to use 
+      HSQLDB and springboot.
+    </p>
+    <p>With Springboot's autoconfiguration facility, spring starts H2 in-memory database (testdb) by default when it sees the dependency in 
+      build.gradle. But with HSQLDB it is different, eventhough there is dependency in build.gradle springboot doesn't start the server.
+    </p>
+    <br>
+    <h4><strong>Why doesn't SpringBoot Start HSQLDB???</strong></h4>
+    <p>Unlike H2 which has default database testdb, HSQLDB doesn't have a default database, we have to specifically mention the database name, alias and port on which it should run.
+      By providing these configurations and along with dependency springboot will start the server.
+    </p>
+    <h4><strong>What & Where to provide these configurations??</strong></h4>
+    <p>I have given the configurations through xml file and placed it in resources folder of my project.</p>
+    <pre>
+      <code>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"&gt;
+&lt;bean id="hqlServer" class="org.hsqldb.server.Server" init-method="start" destroy-method="stop"&gt;
+    &lt;property name="properties"&gt;&lt;bean class="org.hsqldb.persist.HsqlProperties"&gt;
+        &lt;constructor-arg&gt;&lt;props&gt;
+        &lt;prop key="server.database.0"&gt;mem:testdb&lt;/prop&gt;
+        &lt;prop key="server.dbname.0"&gt;testdb&lt;/prop&gt;
+        &lt;prop key="server.no_system_exit"&gt;true&lt;/prop&gt;
+        &lt;prop key="server.port"&gt;9090&lt;/prop&gt;
+        &lt;/props&gt;&lt;/constructor-arg&gt;
+    &lt;/bean>&lt;/property&gt;
+&lt;/bean&gt;
+&lt;/beans&gt;
+      </code>
+      </pre>
+      <p> Then I told spring to get this configuration file by using &quot; @ImportResource &quot; annotation.</p>
+      <pre>
+        <code>
+@SpringBootApplication
+@ImportResource(value="classpath:/hsql_cfg.xml")
+public class MySpringApp {
+}
+        </code>
+      </pre>
+    <h4><strong>How to give active profile to this??</strong></h4>
+    <p>I only needed this for developement purpose, my development profle was dev. I have to set active profile &quot; dev &quot; to &quot; ImportResource &quot; annotation.</p>
+    <p>For this to work, I created another configuration class which is only meant for hsqldb configuration.</p>
+    <pre>
+      <code>
+@Configuration
+@ImportResource(value="classpath:/hsql_cfg.xml")
+@Profile("dev")
+public class HsqldbConfig {
+}
+      </code>
+    </pre>
+    <h4><strong>Configuration without xml file.</strong></h4>
+    <p>If you don't want to have a separate xml file, you can configure it directly in a class as follows.</p>
+    <pre>
+      <code>
+@Bean
+@Profile("dev")
+public void server() {
+  Server server = new Server();
+  server.setDatabaseName(0, "testdb");
+  server.setDatabasePath(0, "mem:testdb");
+  server.start();
+}
+      </code>
+    </pre>
+    <p>All this configuration is done by springboot when we use H2 database, but with HSQLDB we have to add above code or we can download hsqldb in local machine and start it independent to project
+      (which i think is not a very good idea, because everytime a new person joins our project we have to tell them to download and start server, it is not a good practice. 
+      Setting up the project should only have git pull and run the project)</p>
+  </body>
+</html>
