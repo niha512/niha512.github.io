@@ -16,7 +16,7 @@
 
       <section>
         <div id="title">
-          <h1>H2 vs HSQLDB configuration in SpringBoot</h1>
+          <h2>H2 vs HSQLDB configuration in SpringBoot</h2>
           <p>What is the difference???</p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/niha512">niha512</a></span>
@@ -53,8 +53,7 @@
         &lt;/props&gt;&lt;/constructor-arg&gt;
     &lt;/bean>&lt;/property&gt;
 &lt;/bean&gt;
-&lt;/beans&gt;
-      </code>
+&lt;/beans&gt;</code>
       </pre>
       <p> Then I told spring to get this configuration file by using &quot; @ImportResource &quot; annotation.</p>
       <pre>
@@ -62,8 +61,7 @@
 @SpringBootApplication
 @ImportResource(value="classpath:/hsql_cfg.xml")
 public class MySpringApp {
-}
-        </code>
+}</code>
       </pre>
     <h4><strong>How to give active profile to this??</strong></h4>
     <p>I only needed this for developement purpose, my development profle was dev. I have to set active profile &quot; dev &quot; to &quot; ImportResource &quot; annotation.</p>
@@ -74,22 +72,19 @@ public class MySpringApp {
 @ImportResource(value="classpath:/hsql_cfg.xml")
 @Profile("dev")
 public class HsqldbConfig {
-}
-      </code>
+}</code>
     </pre>
     <h4><strong>Configuration without xml file.</strong></h4>
     <p>If you don't want to have a separate xml file, you can configure it directly in a class as follows.</p>
     <pre>
-      <code>
-@Bean
+      <code>@Bean
 @Profile("dev")
 public void server() {
   Server server = new Server();
   server.setDatabaseName(0, "testdb");
   server.setDatabasePath(0, "mem:testdb");
   server.start();
-}
-      </code>
+}</code>
     </pre>
     <p>All this configuration is done by springboot when we use H2 database, but with HSQLDB we have to add above code or we can download hsqldb in local machine and start it independent to project
       (which i think is not a very good idea, because everytime a new person joins our project we have to tell them to download and start server, it is not a good practice. 
