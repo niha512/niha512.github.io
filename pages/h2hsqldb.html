@@ -77,7 +77,8 @@ public class HsqldbConfig {
     <h4><strong>Configuration without xml file.</strong></h4>
     <p>If you don't want to have a separate xml file, you can configure it directly in a class as follows.</p>
     <pre>
-      <code>@Bean
+      <code>
+@Bean
 @Profile("dev")
 public void server() {
   Server server = new Server();
